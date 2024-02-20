@@ -9,17 +9,41 @@
     <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
   </head>
   <body>
-    {{ template "createContact" . }}
+    {{ template "createContact" .Form}}
     <hr>
-    {{ template "contacts" . }}
+    {{ template "contacts" .Data }}
+    <script>
+      document.addEventListener("DOMContentLoaded", (event) => {
+          document.body.addEventListener('htmx:beforeSwap', function(evt) {
+              console.log("hi")
+              if (evt.detail.xhr.status === 422) {
+                  console.log("hi")
+                  // allow 422 responses to swap as we are using this as a signal that
+                  // a form was submitted with bad data and want to rerender with the
+                  // errors
+                  //
+                  // set isError to false to avoid error logging in console
+                  evt.detail.shouldSwap = true;
+                  evt.detail.isError = false;
+              }
+          });
+      })
+    </script>
   </body>
 </html>
 {{ end }}
 
 {{ block "createContact" .}}
-<form hx-swap="outerHTML" hx-target="#contacts" hx-post="/contacts">
-  name: <input type="text" name="name" />
-  email: <input type="email" name="email" />
+<form hx-swap="outerHTML" hx-post="/contacts">
+  name: <input 
+    {{ if .Values.name }} value="{{ .Values.name }}" {{ end }}
+    type="text" name="name" />
+  email: <input 
+    {{ if .Values.email }} value="{{ .Values.email }}" {{ end }}
+    type="email" name="email" />
+  {{ if .Errors.email }}
+    <div style ="color: red"> {{ .Errors.email }} </div>
+  {{ end }}
   <button type="submit"> Create Contact </button>
 </form>
 {{ end }}
