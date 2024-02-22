@@ -58,3 +58,17 @@
   {{ end }}
 </div>
 {{ end }}
+
+
+{{ block "contact" . }}
+  <div>
+    Name: <span>{{ .Name }}</span>
+    Email: <span>{{ .Email }}</span>
+  </div>
+{{ end }}
+
+{{ block "oob-contact" . }}
+  <div id="contacts" hx-swap-oob="afterbegin">
+    {{ template "contact" . }}
+  </div>
+{{ end }}
