@@ -3,6 +3,7 @@ package main
 import (
   "html/template"
   "io"
+  "strconv"
 
   "github.com/labstack/echo"
   "github.com/labstack/echo/middleware"
@@ -27,12 +28,45 @@ type Count struct {
   Count int
 }
 
+var id int = 0
 type Contact struct {
   Name string
   Email string
+  Id int
 }
 
 type Contacts = []Contact
+
+func newContact(name string, email string) Contact {
+  id++
+  return Contact{
+    Name: name,
+    Email:email,
+    Id: id,
+  }
+}
+
+type Data struct {
+  Contacts Contacts
+}
+
+func newData() Data {
+  return Data{
+    Contacts: []Contact{
+      newContact("John", "jd@gmail.com"),
+      newContact("Glenda", "gd@gmail.com"),
+    },
+  }
+}
+
+func (d Data) indexOf(id int) int {
+  for i, contact := range d.Contacts {
+    if contact.Id == id {
+      return i
+    }
+  }
+  return -1
+}
 
 func (d Data) hasEmail(email string) bool {
   for _, contact := range d.Contacts {
@@ -41,25 +75,6 @@ func (d Data) hasEmail(email string) bool {
     }
   }
   return false
-}
-
-func newContact(name string, email string) Contact {
-  return Contact{
-    Name: name,
-    Email:email,
-  }
-}
-
-type Data struct {
-  Contacts Contacts
-}
-func newData() Data {
-  return Data{
-    Contacts: []Contact{
-      newContact("John", "jd@gmail.com"),
-      newContact("Glenda", "gd@gmail.com"),
-    },
-  }
 }
 
 type FormData struct {
@@ -95,7 +110,7 @@ func main() {
   e.Renderer = newTemplate() 
 
   e.GET("/", func(c echo.Context) error {
-    return c.Render(200, "index", newPage())
+    return c.Render(200, "index", page)
   })
 
   e.POST("/contacts", func(c echo.Context) error {
@@ -107,13 +122,28 @@ func main() {
       formData.Values["name"] = name
       formData.Values["email"] = email
       formData.Errors["email"] = "email already exists"
-      return c.Render(422, "createContact", formData)
+      return c.Render(422, "createContactForm", formData)
     }
 
     contact := newContact(name, email)
     page.Data.Contacts = append(page.Data.Contacts, contact)
-    c.Render(200, "createContact", newFormData())
+    c.Render(200, "createContactForm", newFormData())
     return c.Render(200, "oob-contact", contact)
+  })
+
+  e.DELETE("/contacts/:id", func(c echo.Context) error {
+    idStr := c.Param("id")
+    id, err := strconv.Atoi(idStr)
+    if err != nil {
+      return c.String(400, "invalid id")
+    }
+    index := page.Data.indexOf(id)
+    if index == -1 {
+      return c.String(404, "contact not found")
+    }
+    page.Data.Contacts = append(page.Data.Contacts[:index], page.Data.Contacts[index+1:]...)
+
+    return c.NoContent(200)
   })
 
   e.Logger.Fatal(e.Start(":42069"))
