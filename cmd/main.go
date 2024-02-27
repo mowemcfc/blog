@@ -3,8 +3,9 @@ package main
 import (
 	"html/template"
 	"io"
-	"strconv"
-	"time"
+  "time"
+	// "strconv"
+	// "time"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -24,131 +25,85 @@ func newTemplate() *Templates {
 	}
 }
 
-type Count struct {
-	Count int
+type Post struct {
+  CreatedAt time.Time
+  Title string
+  Blurb string
+  Body string
+}
+type Posts = []Post
+
+type HomePage struct {
+  Posts Posts
 }
 
-var id int = 0
-
-type Contact struct {
-	Name  string
-	Email string
-	Id    int
+func newPost(title string, blurb string, body string) Post {
+  // TODO: decide on localisation approach
+  createdAt := time.Now().UTC()
+  return Post{
+    CreatedAt: createdAt,
+    Title: title,
+    Blurb: blurb,
+    Body: body,
+  }
 }
 
-type Contacts = []Contact
-
-func newContact(name string, email string) Contact {
-	id++
-	return Contact{
-		Name:  name,
-		Email: email,
-		Id:    id,
-	}
-}
-
-type Data struct {
-	Contacts Contacts
-}
-
-func newData() Data {
-	return Data{
-		Contacts: []Contact{
-			newContact("John", "jd@gmail.com"),
-			newContact("Glenda", "gd@gmail.com"),
-		},
-	}
-}
-
-func (d Data) indexOf(id int) int {
-	for i, contact := range d.Contacts {
-		if contact.Id == id {
-			return i
-		}
-	}
-	return -1
-}
-
-func (d Data) hasEmail(email string) bool {
-	for _, contact := range d.Contacts {
-		if contact.Email == email {
-			return true
-		}
-	}
-	return false
-}
-
-type FormData struct {
-	Values map[string]string
-	Errors map[string]string
-}
-
-func newFormData() FormData {
-	return FormData{
-		Values: make(map[string]string),
-		Errors: make(map[string]string),
-	}
-}
-
-type Page struct {
-	Data Data
-	Form FormData
-}
-
-func newPage() Page {
-	return Page{
-		Data: newData(),
-		Form: newFormData(),
-	}
+func newHomePage() HomePage {
+  return HomePage {
+    Posts: Posts{
+      newPost("title1", "blurb1", "body1"),
+      newPost("title2", "blurb2", "body2"),
+    },
+  }
 }
 
 func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
 
-	page := newPage()
+	homePage := newHomePage()
 	e.Renderer = newTemplate()
 
 	e.Static("/images", "images")
 	e.Static("/css", "css")
 
 	e.GET("/", func(c echo.Context) error {
-		return c.Render(200, "index", page)
+		return c.Render(200, "index", homePage)
 	})
 
-	e.POST("/contacts", func(c echo.Context) error {
-		name := c.FormValue("name")
-		email := c.FormValue("email")
-
-		if page.Data.hasEmail(email) {
-			formData := newFormData()
-			formData.Values["name"] = name
-			formData.Values["email"] = email
-			formData.Errors["email"] = "email already exists"
-			return c.Render(422, "createContactForm", formData)
-		}
-
-		contact := newContact(name, email)
-		page.Data.Contacts = append(page.Data.Contacts, contact)
-		c.Render(200, "createContactForm", newFormData())
-		return c.Render(200, "oob-contact", contact)
-	})
-
-	e.DELETE("/contacts/:id", func(c echo.Context) error {
-		time.Sleep(1 * time.Second)
-		idStr := c.Param("id")
-		id, err := strconv.Atoi(idStr)
-		if err != nil {
-			return c.String(400, "invalid id")
-		}
-		index := page.Data.indexOf(id)
-		if index == -1 {
-			return c.String(404, "contact not found")
-		}
-		page.Data.Contacts = append(page.Data.Contacts[:index], page.Data.Contacts[index+1:]...)
-
-		return c.NoContent(200)
-	})
+	// e.POST("/contacts", func(c echo.Context) error {
+	// 	name := c.FormValue("name")
+	// 	email := c.FormValue("email")
+	//
+	// 	if page.Data.hasEmail(email) {
+	// 		formData := newFormData()
+	// 		formData.Values["name"] = name
+	// 		formData.Values["email"] = email
+	// 		formData.Errors["email"] = "email already exists"
+	// 		return c.Render(422, "createContactForm", formData)
+	// 	}
+	//
+	// 	contact := newContact(name, email)
+	// 	page.Data.Contacts = append(page.Data.Contacts, contact)
+	// 	c.Render(200, "createContactForm", newFormData())
+	// 	return c.Render(200, "oob-contact", contact)
+	// })
+	//
+	// e.DELETE("/contacts/:id", func(c echo.Context) error {
+	// 	time.Sleep(1 * time.Second)
+	// 	idStr := c.Param("id")
+	// 	id, err := strconv.Atoi(idStr)
+	// 	if err != nil {
+	// 		return c.String(400, "invalid id")
+	// 	}
+	// 	index := page.Data.indexOf(id)
+	// 	if index == -1 {
+	// 		return c.String(404, "contact not found")
+	// 	}
+	// 	page.Data.Contacts = append(page.Data.Contacts[:index], page.Data.Contacts[index+1:]...)
+	//
+	// 	return c.NoContent(200)
+	// })
 
 	e.Logger.Fatal(e.Start(":42069"))
 }
