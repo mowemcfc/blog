@@ -20,14 +20,19 @@
 
 {{ block "header" . }}
 <div class="bg-zinc-900 max-h-20">
-  <div class="grid grid-cols-3 gap-24 justify-between"> 
-    <div class="px-6 border-2 rounded border-yellow-100">
+  <div class="grid grid-cols-6 gap-24 justify-between"> 
+    <div class="px-6 col-span-1">
       <a href="/">
         <img src="/images/home-button-white.png" class="w-12 h-12">
       </a>
     </div>
-    <div class="border-2 rounded border-yellow-100">1</div>
-    <div class="border-2 rounded border-yellow-100">2</div>
+    <div class="grid gap-4 relative align-text-bottom align-items-center grid-cols-4 col-span-4 font-sans text-3xl">
+      <span class="py-2"><a><b>Link 1</b></a></span>
+      <span class="py-2"><a><b>Link 2</b></a></span>
+      <span class="py-2"><a><b>Link 3</b></a></span>
+      <span class="py-2"><a><b>Link 4</b></a></span>
+    </div>
+    <div class="col-span-1">2</div>
   </div>
   <div class="my-1 flex justify-center">
     <hr class="border-orange-700 bg-orange-700 h-1 rounded w-11/12 ">
