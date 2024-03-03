@@ -7,22 +7,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="/css/index.css" rel="stylesheet">
     <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body>
+  <header> 
     {{ template "header" . }}
-    <hr>
+  </header>
+  <body>
     {{ template "PostSummaryList" .Posts }}
   </body>
 </html>
 {{ end }}
 
 {{ block "header" . }}
-<div>
-  This is the header
+<div class="bg-slate-900 max-h-16">
+  <span> 
+    <a href="/">
+      <img src="/images/home-button-white.png" class="w-12 h-12">
+    </a>
+  </span>
 </div>
 {{ end }}
 
-{{ block "PostList" . }}
+{{ block "PostSummaryList" . }}
 <div>
   {{ range . }}
     {{ template "Post" . }}
@@ -33,9 +39,13 @@
 {{ block "Post" . }}
 <div> 
   CreatedAt: {{ .CreatedAt }}
+  </br>
   Title: {{ .Title }}
+  </br>
   Blurb: {{ .Blurb }}
+  </br>
   Body: {{ .Body }}
+  </br>
 </div>
 {{ end }}
 
