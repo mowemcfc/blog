@@ -12,7 +12,7 @@
   <header> 
     {{ template "header" . }}
   </header>
-  <body class="bg-zinc-900 text-white">
+  <body class="bg-zinc-900 px-48 text-white">
     {{ template "PostSummaryList" .Posts }}
   </body>
 </html>
@@ -20,28 +20,29 @@
 
 {{ block "header" . }}
 <div class="bg-zinc-900 max-h-20">
-  <div class="grid grid-cols-6 gap-24 justify-between"> 
-    <div class="px-6 col-span-1">
+  <div class="flex flex-row items-end justify-between"> 
+    <div class="pl-4 basis-20">
       <a href="/">
-        <img src="/images/home-button-white.png" class="w-12 h-12">
+        <img src="/images/home-button-white.png" class="w-8 h-8">
       </a>
     </div>
-    <div class="grid gap-4 relative align-text-bottom align-items-center grid-cols-4 col-span-4 font-sans text-3xl">
-      <span class="py-2"><a><b>Link 1</b></a></span>
-      <span class="py-2"><a><b>Link 2</b></a></span>
-      <span class="py-2"><a><b>Link 3</b></a></span>
-      <span class="py-2"><a><b>Link 4</b></a></span>
+    <div class="flex flex-row items-end gap-4">
+      <span class=""><a href="/blog"><b>blog</b></a></span>
+      <span class=""><a href="/contact"><b>contact</b></a></span>
+      <span class=""><a href="/discrss"><b>discRSS</b></a></span>
     </div>
-    <div class="col-span-1">2</div>
+    <div class="gap-4">
+      <img src="/images/github-logo.png" class="w-16 h-10">
+    </div>
   </div>
   <div class="my-1 flex justify-center">
-    <hr class="border-orange-700 bg-orange-700 h-1 rounded w-11/12 ">
+    <hr class="border-stone-700 bg-stone-700 h-0.5 rounded w-11/12 ">
   </div>
 </div>
 {{ end }}
 
 {{ block "PostSummaryList" . }}
-<div>
+<div class="px-12">
   {{ range . }}
     {{ template "Post" . }}
   {{ end }}
@@ -49,7 +50,7 @@
 {{ end }}
 
 {{ block "Post" . }}
-<div> 
+<div class="mt-4"> 
   CreatedAt: {{ .CreatedAt }}
   </br>
   Title: {{ .Title }}
