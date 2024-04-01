@@ -1,4 +1,4 @@
-{{ block "index" . }}
+{{ block "blog" . }}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -15,7 +15,7 @@
     {{ template "header" . }}
   </header>
   <body class="bg-zinc-900 px-48 text-white">
-    {{ template "PostSummaryList" .Posts }}
+    {{ .Body }}
   </body>
 </html>
 {{ end }}
@@ -42,31 +42,3 @@
   </div>
 </div>
 {{ end }}
-
-{{ block "PostSummaryList" . }}
-<div class="px-12">
-  {{ range $id, $post := . }}
-    {{ template "Post" $post }}
-  {{ end }}
-</div>
-{{ end }}
-
-{{ block "Post" . }}
-<div class="mt-4"> 
-  <a class="group block" href="/blog/{{ .ID }}">
-    <div>
-        <div>
-          <span>
-            <b class="text-l transition duration-300 ease-in-out group-hover:underline"> {{ .Title }} </b> <span class="text-slate-400 text-xs">{{ .CreatedAt }}</span>
-          </span>
-        </div>
-        <div class="pl-1 text-slate-300">
-          <span>
-            {{ .Blurb }}
-          </span>
-        </div>
-    </div>
-  </a>
-</div>
-{{ end }}
-

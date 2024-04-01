@@ -3,9 +3,8 @@ package main
 import (
 	"html/template"
 	"io"
-  "time"
-	// "strconv"
-	// "time"
+  "log"
+	"time"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -27,51 +26,63 @@ func newTemplate() *Templates {
 
 type Post struct {
   CreatedAt string
-  URI string
+  ID string
   Title string
   Blurb string
   Body string
 }
-type Posts = []Post
 
 type HomePage struct {
-  Posts Posts
+  Posts map[string]Post
 }
 
-func newPost(title string, uri string, blurb string, body string) Post {
+func newPost(id string, title string, blurb string, body string) Post {
   createdAt := time.Now().UTC().Format(time.RFC1123)
   return Post{
     CreatedAt: createdAt,
-    URI: uri,
+    ID: id,
     Title: title,
     Blurb: blurb,
     Body: body,
   }
 }
 
-func newHomePage() HomePage {
+func newHomePage(posts map[string]Post) HomePage {
   return HomePage {
-    Posts: Posts{
-      newPost(
-        "blog number 1", 
-        "blog-1",
-        "this is my first blog post",
-        "body1"),
-      newPost(
-        "blog2", 
-        "blog-2",
-        "back again with the new blog", 
-        "body2",
-      ),
-    },
+    Posts: posts,
   }
+}
+
+type BlogPage struct {
+  Post Post
 }
 
 func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
 
-	homePage := newHomePage()
+  allBlogPosts := map[string]Post{
+    "first": newPost(
+      "first",
+      "First Blog",
+      "My first blog...",
+      "Just testing my first blog post here",
+    ),
+    "second": newPost(
+      "second",
+      "Second Blog",
+      "My second blog...",
+      "Just testing my second blog post here",
+    ),
+    "third": newPost(
+      "third",
+      "Third Blog",
+      "My third blog...",
+      "Just testing my third blog post here",
+    ),
+  }
+
+	homePage := newHomePage(allBlogPosts)
 	e.Renderer = newTemplate()
 
 	e.Static("/images", "images")
@@ -79,10 +90,15 @@ func main() {
   e.Static("/js", "js")
 
 	e.GET("/", func(c echo.Context) error {
+    log.Println(homePage.Posts["first"].ID)
 		return c.Render(200, "index", homePage)
 	})
 
-  e.GET("/blog/*")
+  e.GET("/blog/:id", func(c echo.Context) error {
+    id := c.Param("id")
+    post := allBlogPosts[id]
+    return c.Render(200, "blog", post)
+  })
 
 	// e.POST("/contacts", func(c echo.Context) error {
 	// 	name := c.FormValue("name")
