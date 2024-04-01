@@ -8,6 +8,8 @@
     <link href="/css/index.css" rel="stylesheet">
     <script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/js/prism.js"></script>
+    <link href="/css/prism.css" rel="stylesheet"></script>
   </head>
   <header> 
     {{ template "header" . }}
@@ -36,7 +38,7 @@
     </div>
   </div>
   <div class="my-1 flex justify-center">
-    <hr class="border-stone-700 bg-stone-700 h-0.5 rounded w-11/12 ">
+    <hr class="border-stone-700 bg-stone-700 h-0.5 rounded w-full ">
   </div>
 </div>
 {{ end }}
@@ -51,14 +53,18 @@
 
 {{ block "Post" . }}
 <div class="mt-4"> 
-  CreatedAt: {{ .CreatedAt }}
-  </br>
-  Title: {{ .Title }}
-  </br>
-  Blurb: {{ .Blurb }}
-  </br>
-  Body: {{ .Body }}
-  </br>
+  <div>
+    <div>
+      <span>
+        <b class="text-l"> {{ .Title }} </b> <span class="text-slate-400 text-xs">{{ .CreatedAt }}</span>
+      </span>
+    </div>
+    <div class="pl-1 text-slate-300">
+      <span>
+        {{ .Blurb }}
+      </span>
+    </div>
+  </div>
 </div>
 {{ end }}
 

@@ -26,7 +26,7 @@ func newTemplate() *Templates {
 }
 
 type Post struct {
-  CreatedAt time.Time
+  CreatedAt string
   Title string
   Blurb string
   Body string
@@ -38,8 +38,7 @@ type HomePage struct {
 }
 
 func newPost(title string, blurb string, body string) Post {
-  // TODO: decide on localisation approach
-  createdAt := time.Now().UTC()
+  createdAt := time.Now().UTC().Format(time.RFC1123)
   return Post{
     CreatedAt: createdAt,
     Title: title,
@@ -51,8 +50,15 @@ func newPost(title string, blurb string, body string) Post {
 func newHomePage() HomePage {
   return HomePage {
     Posts: Posts{
-      newPost("title1", "blurb1", "body1"),
-      newPost("title2", "blurb2", "body2"),
+      newPost(
+        "blog number 1", 
+        "this is my first blog post",
+        "body1"),
+      newPost(
+        "blog2", 
+        "back again with the new blog", 
+        "body2",
+      ),
     },
   }
 }
@@ -66,6 +72,7 @@ func main() {
 
 	e.Static("/images", "images")
 	e.Static("/css", "css")
+  e.Static("/js", "js")
 
 	e.GET("/", func(c echo.Context) error {
 		return c.Render(200, "index", homePage)
