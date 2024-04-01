@@ -27,6 +27,7 @@ func newTemplate() *Templates {
 
 type Post struct {
   CreatedAt string
+  URI string
   Title string
   Blurb string
   Body string
@@ -37,10 +38,11 @@ type HomePage struct {
   Posts Posts
 }
 
-func newPost(title string, blurb string, body string) Post {
+func newPost(title string, uri string, blurb string, body string) Post {
   createdAt := time.Now().UTC().Format(time.RFC1123)
   return Post{
     CreatedAt: createdAt,
+    URI: uri,
     Title: title,
     Blurb: blurb,
     Body: body,
@@ -52,10 +54,12 @@ func newHomePage() HomePage {
     Posts: Posts{
       newPost(
         "blog number 1", 
+        "blog-1",
         "this is my first blog post",
         "body1"),
       newPost(
         "blog2", 
+        "blog-2",
         "back again with the new blog", 
         "body2",
       ),
@@ -77,6 +81,8 @@ func main() {
 	e.GET("/", func(c echo.Context) error {
 		return c.Render(200, "index", homePage)
 	})
+
+  e.GET("/blog/*")
 
 	// e.POST("/contacts", func(c echo.Context) error {
 	// 	name := c.FormValue("name")
