@@ -11,18 +11,18 @@
     <script src="/js/prism.js"></script>
     <link href="/css/prism.css" rel="stylesheet"></script>
   </head>
-  <header> 
+  <header>
     {{ template "header" . }}
   </header>
   <body class="bg-zinc-900 px-48 text-white">
-    {{ template "PostSummaryList" .Posts }}
+    {{ template "PostSummaries" .Posts }}
   </body>
 </html>
 {{ end }}
 
 {{ block "header" . }}
 <div class="bg-zinc-900 max-h-20">
-  <div class="flex flex-row items-end justify-between"> 
+  <div class="flex flex-row items-end justify-between">
     <div class="pl-4 basis-20">
       <a href="/">
         <img src="/images/home-button-white.png" class="w-8 h-8">
@@ -43,7 +43,7 @@
 </div>
 {{ end }}
 
-{{ block "PostSummaryList" . }}
+{{ block "PostSummaries" . }}
 <div class="px-12">
   {{ range $id, $post := . }}
     {{ template "Post" $post }}
@@ -52,7 +52,7 @@
 {{ end }}
 
 {{ block "Post" . }}
-<div class="mt-4"> 
+<div class="mt-4">
   <a class="group block" href="/blog/{{ .ID }}">
     <div>
         <div>
@@ -69,4 +69,3 @@
   </a>
 </div>
 {{ end }}
-
