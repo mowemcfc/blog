@@ -54,7 +54,71 @@ func newHomePage(posts map[string]Post) HomePage {
 }
 
 type BlogPage struct {
+<<<<<<< Updated upstream
   Post Post
+=======
+	Post Post
+}
+
+var adapter *echoadapter.EchoLambda
+
+func init() {
+	app := echo.New()
+	app.Use(middleware.Logger())
+	app.Renderer = newTemplate()
+
+	allBlogPosts := map[string]Post{
+		"first": newPost(
+			"first",
+			"First Blog",
+			"My first blog...",
+			"Just testing my first blog post here",
+		),
+		"second": newPost(
+			"second",
+			"Second Blog",
+			"My second blog...",
+			"Just testing my second blog post here",
+		),
+		"third": newPost(
+			"third",
+			"Third Blog",
+			"My third blog...",
+			"Just testing my third blog post here",
+		),
+	}
+
+	homePage := newHomePage(allBlogPosts)
+
+	app.GET("/", func(c echo.Context) error {
+		err := c.Render(http.StatusOK, "index", homePage)
+		if err != nil {
+			fmt.Println(err)
+		}
+		return nil
+	})
+
+	app.GET("/blog/:id", func(c echo.Context) error {
+		id := c.Param("id")
+		post := allBlogPosts[id]
+		err := c.Render(http.StatusOK, "blog", post)
+		if err != nil {
+			fmt.Println(err)
+		}
+		return nil
+	})
+
+	isLambda := os.Getenv("LAMBDA_TASK_ROOT") != ""
+	if isLambda {
+		adapter = echoadapter.New(app)
+	} else {
+		log.Fatal(app.Start(":42069"))
+	}
+}
+
+func handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	return adapter.ProxyWithContext(ctx, req)
+>>>>>>> Stashed changes
 }
 
 func main() {
