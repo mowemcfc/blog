@@ -1,10 +1,3 @@
-<<<<<<< Updated upstream
-import * as cdk from 'aws-cdk-lib';
-import { Construct } from 'constructs';
-import * as lambda from 'aws-cdk-lib/aws-lambda'
-import * as apigw from 'aws-cdk-lib/aws-apigateway'
-
-=======
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as lambda from "aws-cdk-lib/aws-lambda";
@@ -16,26 +9,18 @@ import * as s3 from "aws-cdk-lib/aws-s3";
 import * as s3deploy from "aws-cdk-lib/aws-s3-deployment";
 import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
 import * as origins from "aws-cdk-lib/aws-cloudfront-origins";
->>>>>>> Stashed changes
 
 export class DeployStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
-      const htmxGoLambda = new lambda.Function(this, 'HtmxGoLambda', {
-        runtime: lambda.Runtime.PROVIDED_AL2023,
-        handler: 'main',
-        code: lambda.Code.fromAsset('../blog.zip'),
-        environment: {
-          // Add any environment variables your Lambda function needs
-        }
-      });
-
-<<<<<<< Updated upstream
-      // Define API Gateway endpoint
-      const api = new apigw.RestApi(this, 'HtmxGoLambdaAPI');
-      const htmxGoLambdaIntegration = new apigw.LambdaIntegration(htmxGoLambda);
-      api.root.addMethod('GET', htmxGoLambdaIntegration);
-=======
+    const htmxGoLambda = new lambda.Function(this, "HtmxGoLambda", {
+      runtime: lambda.Runtime.PROVIDED_AL2023,
+      handler: "main",
+      code: lambda.Code.fromAsset("../blog.zip"),
+      environment: {
+        // Add any environment variables your Lambda function needs
+      },
+    });
     const assetsBucket = new s3.Bucket(this, "BlogAssetBucket", {});
     new s3deploy.BucketDeployment(this, "BlogDeployFiles", {
       sources: [s3deploy.Source.asset("../static")],
@@ -101,7 +86,5 @@ export class DeployStack extends cdk.Stack {
       ),
       zone: jcartershHostedZone,
     });
->>>>>>> Stashed changes
   }
 }
-
